@@ -1,0 +1,80 @@
+Install java
+	yum install java -y
+       
+change to /opt direcory
+	cd /opt
+
+download target file from tomcat downloads website 
+	wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.70/bin/apache-tomcat-9.0.70.tar.gz
+     
+untar the tar file
+	tar -xvzf apache-tomcat-9.0.70.tar.gz
+
+rename the apache file as tomcat
+	mv apache-tomcat-9.0.70 tomcat
+
+change to tomcat dir
+	cd tomcat/bin/
+
+	ll
+
+we can start the tomcat service using below cmd but only in this path tomcat/bin/
+	./startup.sh
+
+we can stop the tomcat service using below cmd but only in this path tomcat/bin/
+	./shutdown.sh
+   
+To find paths
+	echo $PATH
+	select /usr/local/sbin as path and create link as below
+
+Now create a link in the paths so that we can start the tomcat service from any path. Link name is given as "tomcatup"
+	ln -s /opt/tomcat/bin/startup.sh /usr/local/sbin/tomcatup
+
+start the tomcat server
+	tomcatup
+
+Now create a link in the paths so that we can stop the tomcat service from any path. Link name is given as "tomcatdown"
+	ln -s /opt/tomcat/bin/shutdown.sh /usr/local/sbin/tomcatdown
+
+To stop the server
+	tomcatdown
+
+Now Access the server in GUI mode using "publicIP:8080" port
+
+To check the paths
+	ls -l /usr/local/sbin/tomcatdown
+	ls -l /usr/local/sbin/tomcatup
+   
+once loggedin to the server if u try to access manager app in server u will face 404 error. To resolve it follow below steps
+find / -name context.xml
+	vi /opt/tomcat/webapps/host-manager/META-INF/context.xml
+ 		<!--
+  			<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+        		allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> -->
+        
+ 	vi /opt/tomcat/webapps/manager/META-INF/context.xml
+		 <!--
+ 	 		<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+    	    	allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> -->
+				
+tomcatdown
+tomcatup
+
+Now u can able to resolve the error but again asked to login with logins. Add user details in the below path
+
+cd /opt/tomcat/conf
+ls
+vi tomcat-users.xml
+	<role rolename="manager-gui"/>
+	<role rolename="manager-script"/>
+	<role rolename="manager-jmx"/>
+	<role rolename="manager-status"/>
+	<user username="admin" password="admin" roles="manager-gui, manager-script, manager-jmx, manager-status"/>
+	<user username="deployer" password="deployer" roles="manager-script"/>
+	<user username="tomcat" password="s3cret" roles="manager-gui"/>
+
+tomcatdown
+tomcatup
+
+Now try to login to manager app in tomcat server. you can able to login with user credentials added above - username="tomcat" password="s3cret"
