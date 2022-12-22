@@ -1,0 +1,34 @@
+FROM: To pull the base image	
+RUN: To execute commands	
+CMD: To provide defaults for an executing container	
+ENTRYPOINT: To configure a container that will run as an executable	
+WORKDIR: To sets the working directory	
+COPY: To copy a directory from your local machine to the docker container	
+ADD: To copy files and folders from your local machine to docker containers	
+EXPOSE: Informs Docker that the container listens on the specified network ports at runtime	
+ENV: To set environment variables	
+---------------------------------------------------	
+Install tomcat on Centos using docker image	
+Pull centos from dockerhub	FROM
+Install java	RUN
+Create /opt/tomcat directory	RUN
+Change work directory to /opt/tomcat	WORKDIR
+Download tomcat packages	ADD/RUN
+Extract tar.gz file	RUN
+Rename to tomcat directory	RUN
+Tell to docker that it runs on port 8080	EXPOSE
+Start tomcat services	CMD
+-----------------------------------------------------
+vi Dockerfile
+FROM centos:centos7	
+RUN yum install java -y	
+RUN mkdir /opt/tomcat	
+WORKDIR /opt/tomcat	
+ADD https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz .	
+RUN tar - xvzf apache-tomcat-9.0.54.tar.g	
+RUN mv apache-tomcat-9.0.54/* /opt/tomcat	
+EXPOSE 8080	
+CMD ["/opt/tomcat/bin/catalina.sh", "run"]	
+	
+docker build -t mytomcat .	to create images in working dir
+docker run -d --name demo-container -p 8082:8080 mytomcat	to create container
